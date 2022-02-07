@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./weather-info.component.css']
 })
 export class WeatherInfoComponent implements OnInit {
-
+  pincode:any="";
   constructor() { }
 
   ngOnInit(): void {
+  }
+addLocation() {
+    console.log(this.pincode)
   }
 
 }

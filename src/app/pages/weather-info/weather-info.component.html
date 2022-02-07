@@ -1,1 +1,9 @@
-<p>weather-info works!</p>
+
+<div class="well">
+    <h3>Enter a zipcode:</h3>
+    <input class="form-control" placeholder="Zipcode" type="text" id="addLocation" [(ngModel)]="pincode">
+    <br>
+    <button class="btn btn-primary" id="addLocationBtn" (click)="addLocation()">
+      Add location
+    </button>
+  </div>
