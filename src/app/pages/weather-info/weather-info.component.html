@@ -1,9 +1,35 @@
-
 <div class="well">
-    <h3>Enter a zipcode:</h3>
-    <input class="form-control" placeholder="Zipcode" type="text" id="addLocation" [(ngModel)]="pincode">
-    <br>
-    <button class="btn btn-primary" id="addLocationBtn" (click)="addLocation()">
-      Add location
-    </button>
-  </div>
+  <h3>Enter a zipcode:</h3>
+  <input class="form-control" placeholder="Zipcode" type="text" id="addLocation" [(ngModel)]="pincode">
+  <br>
+  <button class="btn btn-primary" id="addLocationBtn" (click)="addLocation()">
+    Add location
+  </button>
+  <ng-container *ngIf="weatherLists.length > 0">
+    <div *ngFor="let item of weatherLists">
+      <div class="well d-flex">
+        <div>
+          <h3>{{item.location}} ({{item.zipcode}})</h3>
+
+          <h4>Current conditions: {{item.currCondition}}</h4>
+          <h4>Temperatures today:</h4>
+          <p>
+            Current {{item.temp}}
+            - Max {{item.minTemp}}
+            - Min {{item.maxTemp}}
+          </p>
+          <p>
+            <a href="javascript:void(0)" [routerLink]="['/forecast', item.zipcode]">Show 5-day forecast for
+              {{item.location}}</a>
+          </p>
+        </div>
+        <div>
+
+          <img [src]="item.icon" width="70" height="70" />
+          <span class="close position-absolute" style="cursor: pointer;" (click)="deleteWeatherItemByZipCode(item.zipcode)">×</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>

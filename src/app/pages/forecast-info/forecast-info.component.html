@@ -1,1 +1,21 @@
-<p>forecast-info works!</p>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 *ngIf="forecastDetails && forecastDetails.city && forecastDetails.city.name" class="panel-title">5-day
+            forecast for {{forecastDetails.city.name}}</h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of forecastDetails.list; index as i">
+            <span *ngIf="i !=0 && i < 6">
+                {{item.dt * 1000 | date: 'EEEE, MMM d'}}:
+                {{item.weather[0].main}}
+                - Min: {{item.temp.min}}
+                - Max: {{item.temp.max}}
+    
+                <img class="icon" width="60" height="60" [src]="getFormatedForecastUrl(item.weather[0].main)"
+                    alt="No IMAGE">
+            </span>
+         
+        </li>
+    </ul>
+</div>
+<button class="btn btn-success" tabindex="0" id="mainPageBtn" [routerLink]="['/']">&lt; Back to main page</button>
