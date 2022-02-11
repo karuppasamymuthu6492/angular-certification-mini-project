@@ -72,12 +72,15 @@ export class WeatherInfoComponent implements OnInit {
   }
   // fetching Existing  location form the local storage.
   getWeatherInfoDetails() {
+    console.log("FFGGGGG")
     const weatherLists: any[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
+    console.log("FFGGGGG", weatherLists)
     if (weatherLists) {
       this.weatherLists = weatherLists;
     } else {
       this.weatherLists = [];
     }
+    console.log("LLELLRFBHDGD",this.weatherLists.length);
   }
   // Check loaction exist on the stoarge
   checkZipCodeAlreadyExists(zipCode: any) {
