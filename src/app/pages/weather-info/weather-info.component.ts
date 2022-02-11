@@ -47,6 +47,7 @@ export class WeatherInfoComponent implements OnInit {
           this.weatherLists.push(
             item
           );
+          this.weatherLists = [...this.weatherLists].reverse();
           localStorage.setItem(
             'weatherListsInfo1',
             JSON.stringify(this.weatherLists)
