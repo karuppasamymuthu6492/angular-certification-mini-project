@@ -18,7 +18,7 @@
           <h4>Temperatures today:</h4>
           <p>
             Current {{item.temp - 273.15 | number: '1.0-0'}}°C
-            - Max {{item.minTemp -  273.15 | number: '1.0-0' }}°C
+            - Max {{item.minTemp - 273.15 | number: '1.0-0' }}°C
             - Min {{item.maxTemp - 273.15 | number: '1.0-0'}}°C
           </p>
           <p>
@@ -29,14 +29,15 @@
         <div>
 
           <img [src]="item.icon" width="70" height="70" />
-          <span class="close position-absolute" style="cursor: pointer;" (click)="deleteWeatherItemByZipCode(item.zipcode)">×</span>
+          <span class="close position-absolute" style="cursor: pointer;"
+            (click)="deleteWeatherItemByZipCode(item.zipcode)">×</span>
         </div>
       </div>
     </div>
   </ng-container>
   <div *ngIf="weatherLists.length==0">
     <strong>No Weather records found</strong>
-    
-</div>
+
+  </div>
 
 </div>
