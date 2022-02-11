@@ -13,7 +13,7 @@ export class WeatherService {
   getWheatherInfoDetails(zipcode?:any):Observable<any> {
     return this.http.get(`${this.ROOT_API_URL}/weather?zip=${zipcode},in&appid=${this.APP_ID}`);
   }
-  getForeCastInfoDetails(zipCode:string) {
+  getForeCastInfoDetails(zipCode:string):Observable<any> {
     return this.http.get(`${this.ROOT_API_URL}/forecast/daily?zip=${zipCode},in&appid=${this.APP_ID}`);
   }
 

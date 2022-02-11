@@ -11,6 +11,7 @@ import { WeatherService } from 'src/app/services/weather.service';
 export class ForecastInfoComponent implements OnInit {
   forecastDetails: any = {};
   zipcode: string = "";
+  weatherIconRootUrl: string = "https://www.angulartraining.com/images/weather"
 
   constructor(private weatherService: WeatherService, private activatedroute: ActivatedRoute,) { }
 
@@ -33,7 +34,7 @@ export class ForecastInfoComponent implements OnInit {
   }
 
   getFormatedForecastUrl(weatherCondition: any) {
-    return `https://www.angulartraining.com/images/weather/${weatherCondition.toLowerCase()}.png`
+    return weatherCondition !== "Clear"?  `${this.weatherIconRootUrl}/${weatherCondition.toLowerCase()}.png`: `${this.weatherIconRootUrl}/sun.png`
   }
 
 }

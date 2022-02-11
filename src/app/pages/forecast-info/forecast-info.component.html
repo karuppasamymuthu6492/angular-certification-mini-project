@@ -8,8 +8,8 @@
             <span *ngIf="i !=0 && i < 6">
                 {{item.dt * 1000 | date: 'EEEE, MMM d'}}:
                 {{item.weather[0].main}}
-                - Min: {{item.temp.min}}
-                - Max: {{item.temp.max}}
+                - Min: {{item.temp.min-273.15 | number: '1.0-0'}}°C
+                - Max: {{item.temp.max-273.15 | number:'1.0-0'}}°C
     
                 <img class="icon" width="60" height="60" [src]="getFormatedForecastUrl(item.weather[0].main)"
                     alt="No IMAGE">

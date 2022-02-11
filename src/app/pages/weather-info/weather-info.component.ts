@@ -10,12 +10,15 @@ import { WeatherService } from 'src/app/services/weather.service';
 export class WeatherInfoComponent implements OnInit {
   pincode: any = "";
   weatherLists: any[] = [];
+  alertMsg: string = "";
+  alertMsgShow: boolean = false;
+  weatherIconRootUrl: string = "https://www.angulartraining.com/images/weather"
   constructor(private weatherService: WeatherService) { }
-
+  // "https://www.angulartraining.com/images/weather/haze.png"
   ngOnInit(): void {
     this.getWeatherInfoDetails();
-    console.log("INVOKED INIT");
   }
+  // Adding Location
   addLocation() {
     const data: any = {};
     if (!this.pincode) {
@@ -24,34 +27,50 @@ export class WeatherInfoComponent implements OnInit {
     if (!this.checkZipCodeAlreadyExists(this.pincode)) {
       this.weatherService.getWheatherInfoDetails(this.pincode).subscribe(res => {
         if (res) {
+          let item: any =
+          {
+            location: res.name,
+            temp: res.main.temp,
+            minTemp: res.main.temp_min,
+            maxTemp: res.main.temp_max,
+            currCondition: res.weather[0].main,
+            zipcode: this.pincode,
+          }
+          if (res.weather[0].main !== "Clear" && res.weather[0].main !== "Haze") {
+            item.icon = `${this.weatherIconRootUrl}/${res.weather[0].main.toLowerCase()}.png`
+          }
+          if (res.weather[0].main === "Clear") {
+            item.icon = `${this.weatherIconRootUrl}/sun.png`
+          }
+          if (res.weather[0].main === "Haze") {
+            item.icon = `${this.weatherIconRootUrl}/snow.png`
+          }
           this.weatherLists.push(
-            {
-              location: res.name,
-              temp: res.main.temp,
-              minTemp: res.main.temp_min,
-              maxTemp: res.main.temp_max,
-              currCondition: res.weather[0].main,
-              zipcode: this.pincode,
-              icon: `https://www.angulartraining.com/images/weather/${res.weather[0].main.toLowerCase()}.png`
-            }
+            item
           );
-          console.log(JSON.stringify(this.weatherLists, null, 3));
           localStorage.setItem(
             'weatherListsInfo1',
             JSON.stringify(this.weatherLists)
           );
-          console.log("recored added succesfully");
+          this.alertMsgShow = true;
+          this.alertMsg = "Location Added Successfully";
+          this.hideAlertMsg();
         } else {
           alert(`Weather report not for this pincode ${this.pincode}`);
         }
+      }, error=> {
+        this.alertMsgShow = true;
+        this.alertMsg = "City not found.";
+        this.hideAlertMsg();
       })
     } else {
-      this.pincode = '';
-      alert("Zip Code Already exists");
+      this.alertMsgShow = true;
+      this.alertMsg = "Zip Code Already exists";
+      this.hideAlertMsg();
     }
 
   }
-
+  // fetching Existing  location form the local storage.
   getWeatherInfoDetails() {
     const weatherLists: any[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
     if (weatherLists) {
@@ -60,7 +79,7 @@ export class WeatherInfoComponent implements OnInit {
       this.weatherLists = [];
     }
   }
-
+  // Check loaction exist on the stoarge
   checkZipCodeAlreadyExists(zipCode: any) {
     const weatherLists: any[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
     if (weatherLists) {
@@ -68,11 +87,27 @@ export class WeatherInfoComponent implements OnInit {
     }
     return false;
   }
+  // Delete Location
   deleteWeatherItemByZipCode(zipCode: any) {
-    this.weatherLists = this.weatherLists.filter(res => res.zipcode !== zipCode);
+    this.weatherLists.forEach((res, index) => {
+      if (res.zipcode === zipCode) {
+        this.weatherLists.splice(index, 1);
+      }
+    })
     localStorage.setItem(
       'weatherListsInfo1',
       JSON.stringify(this.weatherLists)
     );
+    this.alertMsgShow = true;
+    this.alertMsg = "Location removed successfully";
+    this.hideAlertMsg();
+  }
+  // Hide alert message.
+  hideAlertMsg() {
+    this.pincode = "";
+    setTimeout(() => {
+      this.alertMsgShow = false;
+      this.alertMsg = "";
+    }, 2000)
   }
 }
