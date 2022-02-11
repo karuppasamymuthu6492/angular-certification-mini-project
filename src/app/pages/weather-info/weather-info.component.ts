@@ -14,7 +14,6 @@ export class WeatherInfoComponent implements OnInit {
   alertMsgShow: boolean = false;
   weatherIconRootUrl: string = "https://www.angulartraining.com/images/weather"
   constructor(private weatherService: WeatherService) { }
-  // "https://www.angulartraining.com/images/weather/haze.png"
   ngOnInit(): void {
     this.getWeatherInfoDetails();
   }
