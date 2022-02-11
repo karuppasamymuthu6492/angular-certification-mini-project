@@ -1,20 +1,24 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { weatherIconRootUrl } from 'src/app/constants';
 import { WeatherService } from 'src/app/services/weather.service';
+import { ForecastInfoList } from './forecast.model';
 
 @Component({
   selector: 'app-forecast-info',
   templateUrl: './forecast-info.component.html',
   styleUrls: ['./forecast-info.component.css']
 })
-export class ForecastInfoComponent implements OnInit {
-  forecastDetails: any = {};
+export class ForecastInfoComponent implements OnInit, OnDestroy {
+  forecastDetails: ForecastInfoList = {
+    location: '',
+    list: []
+  };
   zipcode: string = "";
-  weatherIconRootUrl: string = "https://www.angulartraining.com/images/weather"
-
+  private subscription = new Subscription();
   constructor(private weatherService: WeatherService, private activatedroute: ActivatedRoute,) { }
-
   ngOnInit(): void {
     this.activatedroute.params.subscribe((data) => {
       this.zipcode = data['zipcode'];
@@ -26,15 +30,22 @@ export class ForecastInfoComponent implements OnInit {
   }
 
   getforecastInfoDetails() {
-    this.weatherService.getForeCastInfoDetails(this.zipcode).subscribe((res: any) => {
+    this.subscription = this.weatherService.getForeCastInfoDetails(this.zipcode).subscribe((res) => {
       if (res) {
-        this.forecastDetails = { ...res };
+        this.forecastDetails = {
+          location: res.city.name,
+          list: res.list
+        }
       }
     })
   }
 
-  getFormatedForecastUrl(weatherCondition: any) {
-    return weatherCondition !== "Clear"?  `${this.weatherIconRootUrl}/${weatherCondition.toLowerCase()}.png`: `${this.weatherIconRootUrl}/sun.png`
+  getFormatedForecastUrl(weatherCondition: string) {
+    return weatherCondition !== "Clear" ? `${weatherIconRootUrl}/${weatherCondition.toLowerCase()}.png` : `${weatherIconRootUrl}/sun.png`
   }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
 
 }

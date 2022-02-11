@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 *ngIf="forecastDetails && forecastDetails.city && forecastDetails.city.name" class="panel-title">5-day
-            forecast for {{forecastDetails.city.name}}</h3>
+        <h3 *ngIf="forecastDetails && forecastDetails.location" class="panel-title">5-day
+            forecast for {{forecastDetails.location}}</h3>
     </div>
     <ul class="list-group">
         <li class="list-group-item" *ngFor="let item of forecastDetails.list; index as i">
@@ -10,11 +10,11 @@
                 {{item.weather[0].main}}
                 - Min: {{item.temp.min-273.15 | number: '1.0-0'}}°C
                 - Max: {{item.temp.max-273.15 | number:'1.0-0'}}°C
-    
+
                 <img class="icon" width="60" height="60" [src]="getFormatedForecastUrl(item.weather[0].main)"
                     alt="No IMAGE">
             </span>
-         
+
         </li>
     </ul>
 </div>

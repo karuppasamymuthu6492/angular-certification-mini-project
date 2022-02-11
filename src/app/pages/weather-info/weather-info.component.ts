@@ -1,32 +1,35 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscriber, Subscription } from 'rxjs';
+import { weatherIconRootUrl } from 'src/app/constants';
 import { WeatherService } from 'src/app/services/weather.service';
+import { WeatherInfoList } from './weather.model'
+
 
 @Component({
   selector: 'app-weather-info',
   templateUrl: './weather-info.component.html',
   styleUrls: ['./weather-info.component.css']
 })
-export class WeatherInfoComponent implements OnInit {
-  pincode: any = "";
-  weatherLists: any[] = [];
+export class WeatherInfoComponent implements OnInit, OnDestroy {
+  pincode: string = "";
+  weatherLists: WeatherInfoList[] = [];
   alertMsg: string = "";
   alertMsgShow: boolean = false;
-  weatherIconRootUrl: string = "https://www.angulartraining.com/images/weather"
+  private subscription = new Subscription();
   constructor(private weatherService: WeatherService) { }
   ngOnInit(): void {
     this.getWeatherInfoDetails();
   }
   // Adding Location
   addLocation() {
-    const data: any = {};
     if (!this.pincode) {
       return;
     }
     if (!this.checkZipCodeAlreadyExists(this.pincode)) {
-      this.weatherService.getWheatherInfoDetails(this.pincode).subscribe(res => {
+      this.subscription = this.weatherService.getWheatherInfoDetails(this.pincode).subscribe(res => {
         if (res) {
-          let item: any =
+          let formatedWeatherDetails: WeatherInfoList =
           {
             location: res.name,
             temp: res.main.temp,
@@ -34,18 +37,19 @@ export class WeatherInfoComponent implements OnInit {
             maxTemp: res.main.temp_max,
             currCondition: res.weather[0].main,
             zipcode: this.pincode,
+            icon: ''
           }
           if (res.weather[0].main !== "Clear" && res.weather[0].main !== "Haze") {
-            item.icon = `${this.weatherIconRootUrl}/${res.weather[0].main.toLowerCase()}.png`
+            formatedWeatherDetails.icon = `${weatherIconRootUrl}/${res.weather[0].main.toLowerCase()}.png`
           }
           if (res.weather[0].main === "Clear") {
-            item.icon = `${this.weatherIconRootUrl}/sun.png`
+            formatedWeatherDetails.icon = `${weatherIconRootUrl}/sun.png`
           }
           if (res.weather[0].main === "Haze") {
-            item.icon = `${this.weatherIconRootUrl}/snow.png`
+            formatedWeatherDetails.icon = `${weatherIconRootUrl}/snow.png`
           }
           this.weatherLists.push(
-            item
+            formatedWeatherDetails
           );
           this.weatherLists = [...this.weatherLists].reverse();
           localStorage.setItem(
@@ -58,7 +62,7 @@ export class WeatherInfoComponent implements OnInit {
         } else {
           alert(`Weather report not for this pincode ${this.pincode}`);
         }
-      }, error=> {
+      }, error => {
         this.alertMsgShow = true;
         this.alertMsg = "City not found.";
         this.hideAlertMsg();
@@ -72,26 +76,23 @@ export class WeatherInfoComponent implements OnInit {
   }
   // fetching Existing  location form the local storage.
   getWeatherInfoDetails() {
-    console.log("FFGGGGG")
-    const weatherLists: any[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
-    console.log("FFGGGGG", weatherLists)
+    const weatherLists = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
     if (weatherLists) {
       this.weatherLists = weatherLists;
     } else {
       this.weatherLists = [];
     }
-    console.log("LLELLRFBHDGD",this.weatherLists.length);
   }
   // Check loaction exist on the stoarge
-  checkZipCodeAlreadyExists(zipCode: any) {
-    const weatherLists: any[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
+  checkZipCodeAlreadyExists(zipCode: string) {
+    const weatherLists: WeatherInfoList[] = JSON.parse(localStorage.getItem('weatherListsInfo1')!);
     if (weatherLists) {
       return weatherLists.some(res => res.zipcode === zipCode)
     }
     return false;
   }
   // Delete Location
-  deleteWeatherItemByZipCode(zipCode: any) {
+  deleteWeatherItemByZipCode(zipCode: string) {
     this.weatherLists.forEach((res, index) => {
       if (res.zipcode === zipCode) {
         this.weatherLists.splice(index, 1);
@@ -113,4 +114,9 @@ export class WeatherInfoComponent implements OnInit {
       this.alertMsg = "";
     }, 2000)
   }
+  ngOnDestroy() {
+    // unsubscribe the Http api call.
+    this.subscription.unsubscribe();
+  }
+
 }
