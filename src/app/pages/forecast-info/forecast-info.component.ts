@@ -18,7 +18,7 @@ export class ForecastInfoComponent implements OnInit, OnDestroy {
   };
   zipcode: string = "";
   private subscription = new Subscription();
-  constructor(private weatherService: WeatherService, private activatedroute: ActivatedRoute,) { }
+  constructor(public weatherService: WeatherService, private activatedroute: ActivatedRoute,) { }
   ngOnInit(): void {
     this.activatedroute.params.subscribe((data) => {
       this.zipcode = data['zipcode'];
@@ -26,7 +26,6 @@ export class ForecastInfoComponent implements OnInit, OnDestroy {
         this.getforecastInfoDetails();
       }
     });
-
   }
 
   getforecastInfoDetails() {
@@ -40,9 +39,6 @@ export class ForecastInfoComponent implements OnInit, OnDestroy {
     })
   }
 
-  getFormatedForecastUrl(weatherCondition: string) {
-    return weatherCondition !== "Clear" ? `${weatherIconRootUrl}/${weatherCondition.toLowerCase()}.png` : `${weatherIconRootUrl}/sun.png`
-  }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }

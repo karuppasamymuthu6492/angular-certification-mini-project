@@ -37,21 +37,10 @@ export class WeatherInfoComponent implements OnInit, OnDestroy {
             maxTemp: res.main.temp_max,
             currCondition: res.weather[0].main,
             zipcode: this.pincode,
-            icon: ''
+            icon: this.weatherService.getFormatedForeCastIcon(res.weather[0].main)
           }
-          if (res.weather[0].main !== "Clear" && res.weather[0].main !== "Haze") {
-            formatedWeatherDetails.icon = `${weatherIconRootUrl}/${res.weather[0].main.toLowerCase()}.png`
-          }
-          if (res.weather[0].main === "Clear") {
-            formatedWeatherDetails.icon = `${weatherIconRootUrl}/sun.png`
-          }
-          if (res.weather[0].main === "Haze") {
-            formatedWeatherDetails.icon = `${weatherIconRootUrl}/snow.png`
-          }
-          this.weatherLists.push(
-            formatedWeatherDetails
-          );
-          this.weatherLists = [...this.weatherLists].reverse();
+
+          this.weatherLists = [formatedWeatherDetails, ...this.weatherLists];
           localStorage.setItem(
             'weatherListsInfo1',
             JSON.stringify(this.weatherLists)
